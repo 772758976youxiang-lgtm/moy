@@ -1,0 +1,2 @@
+# mock 运行只需 Python 标准库；pytest 用于测试。
+pytest>=8.0,<9.0

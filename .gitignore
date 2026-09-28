@@ -1,0 +1,24 @@
+# 本机环境与缓存
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+.env.*
+
+# 本地实验结果与修改备份；示例 JSON / JSONL 保留
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+data/exports/
+backups/
+*.log
+
+# 模型权重由使用者自行下载
+models/
+*.safetensors
+*.bin
+*.pt
+*.pth

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="meme-token" content="__REQUEST_TOKEN__">
+  <title>模因实验台 · Meme Lab</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="模因实验台首页"><span class="brand-icon">m<span>·</span></span><strong>模因实验台</strong><span class="brand-caption">MEME LAB</span></a>
+    <div class="top-right"><span class="local-pill"><i></i> 本地实验空间</span><span class="version">PoC / 01</span></div>
+  </header>
+  <main>
+    <section class="intro">
+      <div><div class="eyebrow">从一个场景，到一种新表达</div><h1>让灵感，发生一点变异<span>。</span></h1><p>选择模因，给它一个生活场景。生成、比较，再看看下一代会怎样。</p></div>
+      <div class="process" aria-label="实验流程"><span>01 <b>生成</b></span><i>→</i><span>02 <b>选择</b></span><i>→</i><span>03 <b>变异</b></span></div>
+    </section>
+    <div id="notice" class="notice" role="status" hidden></div>
+    <div class="workspace">
+      <aside class="composer panel">
+        <div class="panel-heading"><h2>开始一次实验</h2><span class="mini-label">INPUT</span></div>
+        <form id="experiment-form">
+          <fieldset id="controls">
+            <label class="field-label" for="mode">运行模式</label>
+            <div class="select-shell"><select id="mode"><option value="mock">模拟实验 · Mock</option><option value="real">真实模型 · Qwen3-8B</option></select></div>
+            <p id="mode-hint" class="field-hint">无需下载模型，先体验完整流程。</p>
+            <label class="field-label" for="meme">选择模因</label>
+            <select id="meme" required><option value="">正在读取模因库…</option></select>
+            <div id="meme-info" class="meme-info"><p>读取模因信息中</p></div>
+            <div class="field-row"><label class="field-label" for="context">给它一个场景</label><span id="char-count" class="counter">0 / 2000</span></div>
+            <textarea id="context" rows="4" maxlength="2000" required placeholder="比如：老板说今天大家自愿加班……"></textarea>
+            <div class="quick-scenes"><button type="button" data-scene="老板说今天大家自愿加班">自愿加班</button><button type="button" data-scene="周一早上醒来，发现闹钟比我更热爱工作">周一开机</button><button type="button" data-scene="工资刚到账，房租已经在门口排队">工资到账</button></div>
+            <label class="field-label" for="strategy">表达策略</label>
+            <input id="strategy" type="text" maxlength="500" required>
+            <div class="two-fields basic-counts"><div><label class="field-label" for="num_candidates">生成候选数</label><input id="num_candidates" type="number" min="1" max="12" value="4" required></div><div><label class="field-label" for="top_k">保留 Top K</label><input id="top_k" type="number" min="1" max="6" value="2" required></div></div>
+            <details class="advanced"><summary>调整更多参数 <span>＋</span></summary><div class="advanced-body">
+              <div class="two-fields"><div><label for="temperature">温度</label><input id="temperature" type="number" min="0.01" max="2" step="0.01" value="0.7" required></div><div><label for="top_p">Top P</label><input id="top_p" type="number" min="0.01" max="1" step="0.01" value="0.8" required></div></div>
+              <div class="two-fields"><div><label for="max_new_tokens">输出 token 上限</label><input id="max_new_tokens" type="number" min="1" max="1024" value="160" required></div><div><label for="mutations_per_parent">每条生成变体</label><input id="mutations_per_parent" type="number" min="1" max="4" value="2" required></div></div>
+              <p class="field-hint">温度和 Top P 仅影响真实模型。mock 使用固定模板。</p>
+            </div></details>
+            <div id="real-settings" class="real-settings" hidden>
+              <div class="two-fields"><div><label for="device">运行设备</label><select id="device"><option value="auto">自动分配</option><option value="cuda">CUDA 显卡</option><option value="cpu">CPU</option></select></div><div><label for="quantization">量化</label><select id="quantization"><option value="none">不量化</option><option value="4bit">4 bit</option><option value="8bit">8 bit</option></select></div></div>
+              <label class="checkbox-label"><input id="allow-download" type="checkbox"> 允许首次下载模型权重</label>
+              <p class="field-hint">真实模式需要安装模型依赖及足够内存。首次加载可能较久；切换设备或量化后需要重启服务。</p>
+            </div>
+            <div class="actions"><button id="generate" class="button primary" type="submit"><span>✦</span> 生成候选</button><button id="evolve" class="button secondary" type="button">进化一轮 <span>↗</span></button></div>
+          </fieldset>
+        </form>
+        <p class="composer-foot">同一场景可接着进化；重新生成会开启新的候选池。</p>
+      </aside>
+      <section class="output-area">
+        <div class="stats"><div><span>模因库</span><strong id="meme-count">—</strong><small>个文化种子</small></div><div><span>已存候选</span><strong id="candidate-count">—</strong><small>条实验表达</small></div><div><span>当前最高代次</span><strong id="generation-count">—</strong><small>持续探索中</small></div></div>
+        <section class="results panel">
+          <div class="results-header"><div class="tabs" role="tablist" aria-label="结果视图"><button id="results-tab" class="tab active" role="tab" aria-selected="true" aria-controls="results-view" type="button">本次结果 <span id="result-count">0</span></button><button id="history-tab" class="tab" role="tab" aria-selected="false" aria-controls="history-view" type="button">候选记录</button></div><button id="export" class="text-button" type="button" disabled>导出 JSON ↓</button></div>
+          <div id="results-view" role="tabpanel" aria-labelledby="results-tab">
+            <div id="run-meta" class="run-meta" hidden></div>
+            <div id="empty" class="empty-state"><div class="empty-art" aria-hidden="true"><span class="bubble one">如果……</span><span class="bubble two">那不如 ↗</span><span class="spark">✳</span></div><h3>好表达，从一个真实场景开始</h3><p>在左侧选一个模因，写下你的场景。<br>你的第一组候选，会出现在这里。</p><div class="empty-tags"><span>可解释评分</span><span>保留表达谱系</span><span>本地运行</span></div></div>
+            <div id="loading" class="loading-state" role="status" hidden><span class="spinner"></span><h3 id="loading-title">正在生成候选</h3><p id="loading-detail">正在调用生成器并计算评分…</p><span id="elapsed">已等待 0 秒</span><p class="field-hint">请保持页面打开。结果完成后会写入模因库。</p></div>
+            <div id="cards" class="cards" aria-live="polite"></div>
+          </div>
+          <div id="history-view" role="tabpanel" aria-labelledby="history-tab" hidden><div class="history-intro"><p>当前模因最近保存的 <span id="history-limit">60</span> 条表达，按保存顺序展示。</p><button id="refresh-history" class="text-button" type="button">刷新 ↻</button></div><div id="history-cards" class="cards"></div></div>
+          <div class="results-foot"><span class="info-dot">i</span><p>评分是规则实验指标，并非真实传播概率。匹配、新颖、复用越高越好；重复、风险越低越好。</p></div>
+        </section>
+        <div class="method-note"><span>小步实验，自然进化。</span><p>场景 → 多个候选 → 规则选择 → 变异 → 再选择</p></div>
+      </section>
+    </div>
+    <footer><span>MEME LAB <b>/</b> Qwen3-8B</span><span>把日常的小情绪，变成可以探索的表达。</span></footer>
+  </main>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>

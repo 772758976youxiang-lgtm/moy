@@ -1,0 +1,4 @@
+[
+  {"meme_id":"working-person","name":"打工人","semantic_core":"普通劳动者面对职场压力时的自嘲与韧性","style":["自嘲","简短","反转"],"contexts":["上班","老板","加班","工资"],"templates":["不是{原因}，是{反转}","{场景}。打工人：{回应}"],"examples":["早安，打工人。今天也在为准时下班努力。"]},
+  {"meme_id":"loading-life","name":"人生加载中","semantic_core":"用软件加载比喻生活中的迟疑和疲惫","style":["轻松","拟物"],"contexts":["学习","工作","等待"],"templates":["{任务}加载中，请稍候"],"examples":["身体已到工位，灵魂正在连接服务器。"]}
+]

@@ -1,0 +1,6 @@
+-r requirements-mock.txt
+torch>=2.2,<3.0
+transformers>=4.51.0,<5.0
+accelerate>=1.0,<2.0
+safetensors>=0.4
+# 可选量化需另装 bitsandbytes，不作为强制依赖。
